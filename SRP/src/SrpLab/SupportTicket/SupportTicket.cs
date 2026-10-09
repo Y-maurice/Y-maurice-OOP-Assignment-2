@@ -1,10 +1,12 @@
-namespace SrpLab;
+namespace SrpLab.SupportTicket;
 
 /// <summary>
 /// Support ticket: SLA clocks, NLP-ish priority from free text, and public reply templates.
 /// </summary>
 public sealed class SupportTicket
 {
+
+    private readonly TicketPriorityClassifier _priorityClassifier = new();
     public string Id { get; }
     public string Subject { get; private set; }
     public string Body { get; private set; }
@@ -28,14 +30,7 @@ public sealed class SupportTicket
 
     public void RecalculatePriorityFromText()
     {
-        // Keyword heuristics will churn with support playbooks; SLA math will not.
-        var blob = (Subject + " " + Body).ToLowerInvariant();
-        if (blob.Contains("down") || blob.Contains("outage") || blob.Contains("cannot login"))
-            Priority = "P1";
-        else if (blob.Contains("urgent") || blob.Contains("asap") || blob.Contains("blocked"))
-            Priority = "P2";
-        else
-            Priority = "P3";
+        Priority = _priorityClassifier.Classify(Subject, Body);
     }
 
     public DateTimeOffset SlaDeadline()

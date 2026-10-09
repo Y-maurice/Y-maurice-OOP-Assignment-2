@@ -2,6 +2,7 @@
 using SrpLab.CourseEnrollment;
 using SrpLab.Loans;
 using SrpLab.Subscriptions;
+using SrpLab.SupportTicket;
 
 Console.WriteLine("SrpLab — 10 intentional SRP violations (refactor me)");
 Console.WriteLine("=================================================");
