@@ -3,7 +3,7 @@
 [Oo]bj/
 
 # Visual Studio cache/options
-.vs/
+*.vs/
 *.user
 *.suo
 *.userosscache
@@ -36,5 +36,3 @@ _ReSharper*/
 *.[Rr]e[Ss]harper
 *.DotSettings.user
 
-Task1_clonedRepo/
-csharp-creational-patterns-lab/
