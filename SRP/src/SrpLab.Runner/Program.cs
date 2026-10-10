@@ -1,5 +1,6 @@
 ﻿using SrpLab;
 using SrpLab.CourseEnrollment;
+using SrpLab.KitchenTicket;
 using SrpLab.Loans;
 using SrpLab.Subscriptions;
 using SrpLab.SupportTicket;

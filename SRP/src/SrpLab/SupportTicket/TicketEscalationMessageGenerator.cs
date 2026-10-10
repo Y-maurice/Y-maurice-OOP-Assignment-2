@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace SrpLab;
 
-namespace SrpLab.SupportTicket
+public sealed class TicketEscalationMessageGenerator
 {
-    internal class TicketEscalationMessageGenerator
+    public string Generate(
+        string ticketId,
+        string priority,
+        DateTimeOffset slaDeadline)
     {
+        return $"ESCALATE {ticketId} priority={priority} " +
+               $"breachAt={slaDeadline:u} keywords-scanned=yes";
     }
 }

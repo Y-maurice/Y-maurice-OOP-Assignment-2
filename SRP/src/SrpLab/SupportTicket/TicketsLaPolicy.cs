@@ -1,12 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace SrpLab;
 
-namespace SrpLab.SupportTicket
+public sealed class TicketSlaPolicy
 {
-    internal class TicketsLaPolicy
+    public DateTimeOffset CalculateDeadline(
+    DateTimeOffset openedAt,
+    string priority)
     {
+        var hours = priority switch
+        {
+            "P1" => 4,
+            "P2" => 24,
+            _ => 72
+        };
+
+        return openedAt.AddHours(hours);
     }
+
+    public bool IsBreached(
+        DateTimeOffset openedAt,
+        string priority,
+        DateTimeOffset now)
+    {
+        return now > CalculateDeadline(openedAt, priority);
+    }
+
 }

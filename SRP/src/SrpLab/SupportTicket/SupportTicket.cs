@@ -5,8 +5,10 @@ namespace SrpLab.SupportTicket;
 /// </summary>
 public sealed class SupportTicket
 {
-
+    private readonly TicketSlaPolicy _slaPolicy = new();
     private readonly TicketPriorityClassifier _priorityClassifier = new();
+    private readonly PublicTicketReplyGenerator _publicReplyGenerator = new();
+    private readonly TicketEscalationMessageGenerator _escalationMessageGenerator = new();
     public string Id { get; }
     public string Subject { get; private set; }
     public string Body { get; private set; }
@@ -35,27 +37,28 @@ public sealed class SupportTicket
 
     public DateTimeOffset SlaDeadline()
     {
-        // Operational SLA policy — different stakeholders than reply wording.
-        var hours = Priority switch
-        {
-            "P1" => 4,
-            "P2" => 24,
-            _ => 72
-        };
-        return OpenedAt.AddHours(hours);
+        return _slaPolicy.CalculateDeadline(OpenedAt, Priority);
     }
 
-    public bool IsBreached(DateTimeOffset now) => now > SlaDeadline();
 
+    public bool IsBreached(DateTimeOffset now)
+    {
+        return _slaPolicy.IsBreached(OpenedAt, Priority, now);
+    }
     public string DraftPublicReply(string agentName)
     {
-        // Tone/templates owned by CX — not by SLA engineering.
-        var apology = Priority == "P1" ? "We are treating this as a critical incident." : "Thanks for reaching out.";
-        return $"Hi,\n{apology}\nTicket {Id} is with {agentName}. Next update before {SlaDeadline():u}.\n";
+        return _publicReplyGenerator.Generate(
+            Id,
+            Priority,
+            agentName,
+            SlaDeadline());
     }
 
     public string InternalEscalationBlurb()
     {
-        return $"ESCALATE {Id} priority={Priority} breachAt={SlaDeadline():u} keywords-scanned=yes";
+        return _escalationMessageGenerator.Generate(
+            Id,
+            Priority,
+            SlaDeadline());
     }
 }

@@ -1,4 +1,4 @@
-namespace SrpLab;
+namespace SrpLab.KitchenTicket;
 
 /// <summary>
 /// Kitchen ticket: allergen scan from ingredients, cook ETA heuristics, and printed ticket layout.
@@ -6,6 +6,7 @@ namespace SrpLab;
 public sealed class KitchenTicket
 {
     private readonly List<(string Item, List<string> Ingredients, int PrepMinutes)> _items = new();
+    private readonly AllergenDetector _allergenDetector = new();
 
     public void AddItem(string item, IEnumerable<string> ingredients, int prepMinutes)
     {
@@ -15,18 +16,17 @@ public sealed class KitchenTicket
     public IReadOnlyList<string> DetectAllergens()
     {
         // Regulatory allergen dictionary changes separately from ticket layout.
-        var hits = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        foreach (var (_, ingredients, _) in _items)
+        var ingredients = new List<string>();
+
+        foreach (var item in _items)
         {
-            foreach (var ing in ingredients)
+            foreach (var ingredient in item.Ingredients)
             {
-                if (ing.Contains("milk") || ing.Contains("cheese") || ing.Contains("butter")) hits.Add("dairy");
-                if (ing.Contains("wheat") || ing.Contains("flour") || ing.Contains("bread")) hits.Add("gluten");
-                if (ing.Contains("peanut") || ing.Contains("almond") || ing.Contains("cashew")) hits.Add("nuts");
-                if (ing.Contains("shrimp") || ing.Contains("prawn") || ing.Contains("crab")) hits.Add("shellfish");
+                ingredients.Add(ingredient);
             }
         }
-        return hits.OrderBy(x => x).ToList();
+
+        return _allergenDetector.Detect(ingredients);
     }
 
     public int EstimatedReadyMinutes(int openStations)
