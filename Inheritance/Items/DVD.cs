@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Library_System.Items;
 
-namespace Library_System
+public class DVD : LibraryItem
 {
-    internal class DVD
+    public DVD(string catalogNumber, string title, decimal baseLateFee)
+           : base(catalogNumber, title, baseLateFee, 7, 2m)
     {
     }
 }

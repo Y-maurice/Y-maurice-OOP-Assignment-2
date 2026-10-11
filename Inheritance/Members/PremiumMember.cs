@@ -1,10 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Library_System.Members;
 
-namespace Library_System
+public class PremiumMember : Member
 {
-    internal class PremiumMember
+    public PremiumMember(string personId, string fullName, string phone, decimal discount)
+        : base(personId, fullName, phone, 10, discount)
     {
     }
+
+    public int ReadingPoints
+    {
+        get { return CountReturnedLoans() * 5; }
+    }
 }
+

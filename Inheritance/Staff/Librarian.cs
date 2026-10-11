@@ -1,10 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Library_System.Staff;
 
-namespace Library_System
+public class Librarian : Staff
 {
-    internal class Librarian
+    public Librarian(string personId, string fullName, string phone,
+                        DateTime hireDate, decimal salary)
+           : base(personId, fullName, phone, hireDate, salary, 0m)
     {
+    }
+
+    public void ProcessReturn(Loan loan, DateTime returnDate)
+    {
+        if (loan == null)
+            throw new ArgumentNullException(nameof(loan));
+
+        loan.Return(returnDate);
+    }
+
+    public void MarkLost(Loan loan)
+    {
+        if (loan == null)
+            throw new ArgumentNullException(nameof(loan));
+
+        loan.MarkLost();
     }
 }

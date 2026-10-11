@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Library_System.Items;
 
-namespace Library_System
+public class Magazine : LibraryItem
 {
-    internal class Magazine
+    public Magazine(string catalogNumber, string title, decimal baseLateFee)
+        : base(catalogNumber, title, baseLateFee, 4, 0.5m)
     {
     }
 }

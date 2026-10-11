@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Library_System.Members;
 
-namespace Library_System
+public class StudentMember : Member
 {
-    internal class StudentMember
+    public StudentMember(string personId, string fullName, string phone)
+        : base(personId, fullName, phone, 3, 0m)
     {
     }
 }
+

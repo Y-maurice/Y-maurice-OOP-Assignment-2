@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Library_System.Enums;
 
-namespace Library_System.Enums
+public enum LoanStatus
 {
-    internal class LoanStatus
-    {
-    }
+    Borrowed,
+    Returned,
+    Lost
 }

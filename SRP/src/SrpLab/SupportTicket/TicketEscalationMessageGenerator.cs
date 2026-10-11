@@ -1,4 +1,4 @@
-﻿namespace SrpLab;
+﻿namespace SrpLab.SupportTicket;
 
 public sealed class TicketEscalationMessageGenerator
 {

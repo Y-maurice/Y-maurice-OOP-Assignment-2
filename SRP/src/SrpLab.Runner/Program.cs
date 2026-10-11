@@ -1,9 +1,13 @@
-﻿using SrpLab;
+﻿using SrpLab.AppointmentDesk;
+using SrpLab.CheckoutBasket;
 using SrpLab.CourseEnrollment;
+using SrpLab.GradeBook;
 using SrpLab.KitchenTicket;
 using SrpLab.Loans;
 using SrpLab.Subscriptions;
 using SrpLab.SupportTicket;
+using SrpLab.WardBoard;
+using SrpLab.WarehousePickList;
 
 Console.WriteLine("SrpLab — 10 intentional SRP violations (refactor me)");
 Console.WriteLine("=================================================");

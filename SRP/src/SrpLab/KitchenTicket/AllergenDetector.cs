@@ -1,4 +1,4 @@
-﻿namespace SrpLab;
+﻿namespace SrpLab.KitchenTicket;
 
 public sealed class AllergenDetector
 {

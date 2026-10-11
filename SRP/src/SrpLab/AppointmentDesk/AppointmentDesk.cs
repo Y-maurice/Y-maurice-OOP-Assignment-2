@@ -1,29 +1,27 @@
-namespace SrpLab;
+namespace SrpLab.AppointmentDesk;
 
 /// <summary>
 /// Appointment desk: opening-hours rules, slot search, and ICS calendar blob generation.
 /// </summary>
+
 public sealed class AppointmentDesk
 {
     private readonly HashSet<DateTimeOffset> _booked = new();
-    public TimeOnly Open { get; }
-    public TimeOnly Close { get; }
-    public int SlotMinutes { get; }
+    private readonly ClinicBusinessHours _businessHours;
+    private readonly AppointmentIcsGenerator _icsGenerator = new();
+    private readonly AppointmentSmsReminderGenerator _smsReminderGenerator = new();
+
+    public TimeOnly Open => _businessHours.Open;
+    public TimeOnly Close => _businessHours.Close;
+    public int SlotMinutes => _businessHours.SlotMinutes;
 
     public AppointmentDesk(TimeOnly open, TimeOnly close, int slotMinutes)
     {
-        Open = open;
-        Close = close;
-        SlotMinutes = slotMinutes;
+        _businessHours = new ClinicBusinessHours(open, close, slotMinutes);
     }
 
     public bool IsWithinBusinessHours(DateTimeOffset when)
-    {
-        // Clinic calendar policy — HR/ops — not the same as ICS serialization.
-        if (when.DayOfWeek is DayOfWeek.Friday or DayOfWeek.Saturday) return false;
-        var t = TimeOnly.FromDateTime(when.DateTime);
-        return t >= Open && t.AddMinutes(SlotMinutes) <= Close;
-    }
+        => _businessHours.IsWithinBusinessHours(when);
 
     public DateTimeOffset? FindNextSlot(DateTimeOffset from, int searchHours)
     {
@@ -46,20 +44,10 @@ public sealed class AppointmentDesk
     }
 
     public string ToIcs(DateTimeOffset slot, string patientName, string clinician)
-    {
-        // Calendar interoperability format changes with clients — not opening hours.
-        var uid = Guid.NewGuid();
-        var end = slot.AddMinutes(SlotMinutes);
-        return "BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\n" +
-               $"UID:{uid}\nDTSTART:{slot:yyyyMMdd'T'HHmmss'Z'}\nDTEND:{end:yyyyMMdd'T'HHmmss'Z'}\n" +
-               $"SUMMARY:Visit {patientName} / {clinician}\nEND:VEVENT\nEND:VCALENDAR\n";
-    }
+        => _icsGenerator.Generate(slot, SlotMinutes, patientName, clinician);
 
     public string SmsReminder(DateTimeOffset slot, string clinicPhone)
-    {
-        // Messaging channel copy — fourth concern hiding in the "scheduler".
-        return $"Reminder: appointment {slot:MMM dd HH:mm}. Call {clinicPhone} to reschedule.";
-    }
+        => _smsReminderGenerator.Generate(slot, clinicPhone);
 
     private DateTimeOffset Align(DateTimeOffset from)
     {

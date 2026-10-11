@@ -1,4 +1,4 @@
-﻿namespace Library_System;
+﻿namespace Library_System.Staff;
 
 public class Staff : Person
 {
@@ -20,4 +20,15 @@ public class Staff : Person
         MonthlySalary = salary;
         this.allowance = allowance;
     }
+
+    public decimal MonthlyPay => MonthlySalary + allowance;
+
+    public void GiveRaise(decimal percentage)
+    {
+        if (percentage <= 0)
+            throw new ArgumentException("Raise percentage must be greater than zero.");
+
+        MonthlySalary += MonthlySalary * percentage / 100m;
+    }
+
 }
