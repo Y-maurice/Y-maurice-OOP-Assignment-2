@@ -45,50 +45,30 @@ Console.WriteLine($"Original's weapon damage is now: {original.Weapon.Damage}");
 copy.Abilities.Add("Fire Breath");
 Console.WriteLine($"Original abilities: {string.Join(", ", original.Abilities)}");
 
-//Console.WriteLine("\n=== PROTOTYPE: AFTER ===\n");
+Console.WriteLine("\n=== PROTOTYPE: AFTER ===\n");
 
-//// --- 1) Clone a single enemy ---
-//Console.WriteLine("Creating the prototype (slow, once):");
-//Enemy proto = new Orc();
-//proto.Name = "Boss Orc";
+var registry = new EnemyRegistry();
+registry.Register("orc", new Orc());               // slow, happens once
 
-//sw.Restart();
-//Enemy clone = proto.Clone();   // must print NO loading line
-//Console.WriteLine($"Clone took {sw.ElapsedMilliseconds} ms");
+sw.Restart();
+var clones = new List<Enemy>();
+for (int i = 1; i <= 5; i++) clones.Add(registry.Create("orc"));
+Console.WriteLine($"Created 5 orcs from the registry in {sw.ElapsedMilliseconds} ms\n");
 
-//Console.WriteLine($"\nPrototype model id: {proto.ModelId}");
-//Console.WriteLine($"Clone model id:     {clone.ModelId}");
-//Console.WriteLine($"Same model id?      {proto.ModelId == clone.ModelId}");           // True
-
-//clone.Weapon.Damage = 999;
-//clone.Abilities.Add("Fire Breath");
-//Console.WriteLine($"\nChanged the CLONE's damage to 999 and added Fire Breath.");
-//Console.WriteLine($"Prototype damage:    {proto.Weapon.Damage}");                      // 25
-//Console.WriteLine($"Prototype abilities: {string.Join(", ", proto.Abilities)}");       // Rage
-//Console.WriteLine($"Same weapon object?  {ReferenceEquals(proto.Weapon, clone.Weapon)}"); // False
-//Console.WriteLine($"Same abilities list? {ReferenceEquals(proto.Abilities, clone.Abilities)}"); // False
-
-//// --- 2) Registry (R5) ---
-//Console.WriteLine("\nRegistering prototypes (slow, once each):");
-//var registry = new EnemyRegistry();
-//registry.Register("orc", new Orc());
-//registry.Register("elf", new Elf());
-
-//sw.Restart();
-//var newArmy = new List<Enemy>();
-//for (int i = 1; i <= 5; i++)
-//{
-//    var e = registry.Create("orc");   // must print NO loading line
-//    e.Name = $"Orc-{i}";
-//    newArmy.Add(e);
-//}
-//Console.WriteLine($"Created 5 orcs from the registry in {sw.ElapsedMilliseconds} ms");  // ~0 ms
-
-//var elf = registry.Create("elf");
-//Console.WriteLine($"Elf from registry: {elf.Name}, weapon {elf.Weapon.Name}");
-//Console.WriteLine($"Orc-1 and Orc-2 same object? {ReferenceEquals(newArmy[0], newArmy[1])}"); // False
-//Console.WriteLine($"Orc-1 and Orc-2 same model id? {newArmy[0].ModelId == newArmy[1].ModelId}"); // True
+clones[1].Weapon.Damage = 999;
+Console.WriteLine($"Same model id? {clones[0].ModelId == clones[1].ModelId}");
+Console.WriteLine($"Clone 0 damage: {clones[0].Weapon.Damage}, clone 1 damage: {clones[1].Weapon.Damage}");
 
 Console.WriteLine("\n=== BUILDER: BEFORE ===\n");
 Console.WriteLine(RegistrationCallSites.CreateLiveStudentUgly());
 Console.WriteLine(RegistrationCallSites.CreateVideosOnlyUgly());
+
+Console.WriteLine("\n=== BUILDER: AFTER ===\n");
+Console.WriteLine(RegistrationCallSites.CreateLiveStudent());
+Console.WriteLine(RegistrationCallSites.CreateVideosOnly());
+
+try { CourseRegistrationBuilder.For("x@mail.com", "SEF-101").LiveGroup().Build(); }
+catch (InvalidOperationException ex) { Console.WriteLine($"Invalid: {ex.Message}"); }
+
+try { CourseRegistrationBuilder.For("x@mail.com", "SEF-101").VideosOnly().WithGroupCode("G1").Build(); }
+catch (InvalidOperationException ex) { Console.WriteLine($"Invalid: {ex.Message}"); }
